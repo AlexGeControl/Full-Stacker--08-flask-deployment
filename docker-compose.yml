@@ -12,8 +12,7 @@ services:
       - FLASK_CONFIG=development
       - STATIC_PATH=/app/application/static
     ports:
-      - "50080:80"
-      - "50443:443"
+      - "58080:8080"
     volumes:
       # remove the following for production with Dockerfile ADD
       - ${PWD}/service/application:/app/application
