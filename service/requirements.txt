@@ -1,0 +1,11 @@
+# flask core:
+coverage==5.0.3
+Flask==1.1.1
+Flask-Cors==3.0.8
+# JWT processing:
+PyJWT==1.7.1
+# testing:
+pytest==5.3.5
+# production server:
+gunicorn==20.0.4
+

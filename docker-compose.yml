@@ -1,0 +1,24 @@
+version: '3.4'
+
+services:
+  service:
+    build:
+      context: ${PWD}/service
+      dockerfile: Dockerfile
+    image: "udafullstack/service"
+    environment:
+      - FLASK_APP=main.py
+      - FLASK_DEBUG=true
+      - FLASK_CONFIG=development
+      - STATIC_PATH=/app/application/static
+    ports:
+      - "50080:80"
+      - "50443:443"
+    volumes:
+      # remove the following for production with Dockerfile ADD
+      - ${PWD}/service/application:/app/application
+      - ${PWD}/service/tests:/app/tests
+      - ${PWD}/service/config.py:/app/config.py
+      - ${PWD}/service/main.py:/app/main.py
+      - ${PWD}/service/requirements.txt:/app/requirements.txt
+      - ${PWD}/service/uwsgi.ini:/app/uwsgi.ini      
