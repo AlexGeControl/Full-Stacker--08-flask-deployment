@@ -21,3 +21,11 @@ aws iam put-role-policy \
     --role-name UdacityFlaskDeployCBKubectlRole \
     --policy-name eks-describe \
     --policy-document file:///tmp/iam-role-policy
+
+aws iam attach-role-policy \
+    --role-name UdacityFlaskDeployCBKubectlRole \
+    --policy-arn arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+
+aws iam attach-role-policy \
+    --role-name UdacityFlaskDeployCBKubectlRole \
+    --policy-arn arn:aws:iam::aws:policy/AWSCodeBuildAdminAccess

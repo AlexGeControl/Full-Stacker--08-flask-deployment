@@ -49,7 +49,11 @@ Completing the project involves several steps:
 
 First, create an EKS cluster using eksctl:
 ```bash
-nohup eksctl create cluster --name uda-full-stack-development --region us-west-2 & > eks-create-cluster.log
+# install eksctl
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
+# create cluster:
+nohup eksctl create cluster --name simple-jwt-api --region us-west-2 & > eks-create-cluster.log
 ```
 
 ### Set Up an IAM Role for the Cluster
