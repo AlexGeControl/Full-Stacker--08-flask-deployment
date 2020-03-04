@@ -126,3 +126,42 @@ After that, create CI/CD pipeline using CloudFormation
 * Press 'Next'. Give the stack a name, fill in your GitHub login and the Github access token generated in step 1.
 * Confirm the cluster name matches your cluster, the 'kubectl IAM role' matches the role you created above, and the repository matches the name of your forked repo.
 * Create the stack.
+
+---
+
+### Testing
+
+#### Endpoints
+
+- `GET '/'`: http://a367682165def11eabc7606274191f92-240447169.us-west-2.elb.amazonaws.com/api/v1/ 
+
+    ```bash
+    # cURL test
+    curl http://a367682165def11eabc7606274191f92-240447169.us-west-2.elb.amazonaws.com/api/v1/
+    ```
+
+- `POST '/auth'`: http://a367682165def11eabc7606274191f92-240447169.us-west-2.elb.amazonaws.com/api/v1/auth
+- `GET '/contents'`: http://a367682165def11eabc7606274191f92-240447169.us-west-2.elb.amazonaws.com/api/v1/contents 
+
+    ```bash
+    # cURL test
+    export TOKEN=`curl -d '{"email":"email","password":"password"}' -H "Content-Type: application/json" -X POST  http://a367682165def11eabc7606274191f92-240447169.us-west-2.elb.amazonaws.com/api/v1/auth  | jq -r '.token'`
+    curl --request GET http://a367682165def11eabc7606274191f92-240447169.us-west-2.elb.amazonaws.com/api/v1/contents -H "Authorization: Bearer ${TOKEN}" | jq 
+    ```
+
+#### Flask Unittest Cases
+
+First, the flask unittest covers all the 3 endpoints. See the test cases inside [Flask tests](service/tests)
+
+The test results and coverage analysis on AWS CodePipeline is shown in the following picture
+
+<img src="doc/flask-test-coverage-in-code-pipeline.png" alt="Flask Tests on AWS Code Pipeline"/>
+
+#### CI/CD Pipeline Status
+
+The final status of AWS CodePipeline is shown in the picture below
+
+<img src="doc/aws-code-pipeline-status.png" alt="Flask Tests on AWS Code Pipeline"/>
+
+
+
