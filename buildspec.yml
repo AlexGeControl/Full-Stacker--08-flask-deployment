@@ -30,6 +30,7 @@ phases:
     commands:
       # set Docker image name:
       - TAG="$REPOSITORY_NAME.$REPOSITORY_BRANCH.$ENVIRONMENT_NAME.$(date +%Y-%m-%d.%H.%M.%S).$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
+      - echo "[image tag]\n${REPOSITORY_URI}:${TAG}"
       - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY_URI:$TAG"'@' simple-jwt-api.yml
       # login to registry:
       - $(aws ecr get-login --no-include-email)
