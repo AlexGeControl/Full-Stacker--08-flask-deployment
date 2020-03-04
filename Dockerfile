@@ -6,12 +6,12 @@ RUN mkdir /app
 WORKDIR /app
 
 # install dependencies:
-COPY ${PWD}/requirements.txt /app/requirements.txt
+COPY ${PWD}/service/requirements.txt /app/requirements.txt
 RUN pip install --upgrade pip && \
     pip install -r /app/requirements.txt
 
 # add application:
-ADD ${PWD} /app/
+ADD ${PWD}/service /app/
 
 # launch gunicorn:
 EXPOSE 8080
