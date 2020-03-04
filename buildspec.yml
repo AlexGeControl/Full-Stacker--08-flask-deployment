@@ -28,6 +28,7 @@ phases:
     commands:
       # run python tests:
       - cd service
+      - export LC_ALL=C.UTF-8 && export LANG=C.UTF-8
       - flask test --coverage=True
       - cd ..
       # set Docker image name:
