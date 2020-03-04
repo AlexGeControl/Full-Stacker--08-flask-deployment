@@ -103,10 +103,16 @@ The next steps are provided to quickly set up an IAM role for your cluster.
 * In the data/mapRoles section of this document add, replacing <ACCOUNT_ID> with your account id:
 
     ```yaml
-    - rolearn: arn:aws:iam::<ACCOUNT_ID>:role/UdacityFlaskDeployCBKubectlRole
-        username: build
-        groups:
-        - system:masters
+    mapRoles: |
+      - rolearn: arn:aws:iam::112924623848:role/eksctl-simple-jwt-api-nodegroup-n-NodeInstanceRole-CXBRB58CU6J1
+          username: system:node:{{EC2PrivateDNSName}}
+          groups:
+          - system:bootstrappers
+          - system:nodes
+      - rolearn: arn:aws:iam::112924623848:role/UdacityFlaskDeployCBKubectlRole
+          username: build
+          groups:
+          - system:masters
     ```
 
 * Now update your cluster's configmap:
