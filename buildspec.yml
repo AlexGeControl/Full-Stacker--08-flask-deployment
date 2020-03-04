@@ -20,10 +20,10 @@ phases:
       - echo "[aws-iam-authenticator]\n$(aws-iam-authenticator help)"
       # install awscli:
       - apt-get update && apt-get -y install unzip jq python3-pip python3-dev && pip3 install --upgrade awscli
-      # - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      # - unzip awscliv2.zip
-      # - sudo ./aws/install
-      # - export PATH=$PATH:/usr/local/bin
+      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      - unzip awscliv2.zip
+      - sudo ./aws/install
+      - export PATH=$PATH:/usr/local/bin
       - echo "[awscli]\n$(aws --version)"
 
   pre_build:
@@ -52,7 +52,7 @@ phases:
       - export AWS_EXPIRATION=$(echo ${CREDENTIALS} | jq -r '.Credentials.Expiration')
       # configure kubectl:
       - aws eks update-kubeconfig --region us-west-2 --name simple-jwt-api
-      - kubectl get nodes
+      - echo "[kubectl]\n$(kubectl get nodes)"
       - kubectl apply -f simple-jwt-api.yml
       - printf '[{"name":"simple-jwt-api","imageUri":"%s"}]' $REPOSITORY_URI:$TAG > build.json
       - pwd
