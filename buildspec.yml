@@ -23,15 +23,15 @@ phases:
       - echo "[awscli]\n$(aws --version)"
       # install app dependencies:
       - pip3 install -r service/requirements.txt
-
-  pre_build:
-    commands:
-      # run python tests:
+      # run flask unittests for API endpoints:
       - cd service
       - export LC_ALL=C.UTF-8 && export LANG=C.UTF-8
       - export FLASK_APP=main.py && FLASK_CONFIG=development
       - flask test --coverage=True
       - cd ..
+
+  pre_build:
+    commands:
       # set Docker image name:
       - TAG="$REPOSITORY_NAME.$REPOSITORY_BRANCH.$ENVIRONMENT_NAME.$(date +%Y-%m-%d.%H.%M.%S).$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
       - echo "[image tag]\n${REPOSITORY_URI}:${TAG}"

@@ -6,12 +6,8 @@ services:
       context: ${PWD}
       dockerfile: Dockerfile
     image: "udafullstack/service"
-    environment:
-      - JWT_SECRET=UdacityFullStackDevelopmentJWTSecret
-      - FLASK_APP=main.py
-      - FLASK_DEBUG=true
-      - FLASK_CONFIG=development
-      - STATIC_PATH=/app/application/static
+    env_file:
+      - ${PWD}/service/simple-jwt-api.env
     ports:
       - "58080:8080"
     volumes:

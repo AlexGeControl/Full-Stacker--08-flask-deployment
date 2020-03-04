@@ -131,6 +131,31 @@ After that, create CI/CD pipeline using CloudFormation
 
 ### Testing
 
+#### Local Execution
+
+Use docker compose for local execution. Then the endpoints are available as follows:
+
+- `GET '/'`: http:/localhost:58080/api/v1/ 
+
+    ```bash
+    # cURL test
+    curl http://localhost:58080/api/v1/
+    ```
+
+- `POST '/auth'`: http://localhost:58080/api/v1/auth
+- `GET '/contents'`: http://localhost:58080/api/v1/contents 
+
+    ```bash
+    # cURL test
+    export TOKEN=`curl -d '{"email":"email","password":"password"}' -H "Content-Type: application/json" -X POST  http://localhost:58080/api/v1/auth  | jq -r '.token'`
+    curl --request GET http://localhost:58080/api/v1/contents -H "Authorization: Bearer ${TOKEN}" | jq 
+    ```
+
+```bash
+# build & launch:
+docker-compose build && docker-compose up
+```
+
 #### Endpoints
 
 - `GET '/'`: http://a367682165def11eabc7606274191f92-240447169.us-west-2.elb.amazonaws.com/api/v1/ 
@@ -162,6 +187,3 @@ The test results and coverage analysis on AWS CodePipeline is shown in the follo
 The final status of AWS CodePipeline is shown in the picture below
 
 <img src="doc/aws-code-pipeline-status.png" alt="Flask Tests on AWS Code Pipeline"/>
-
-
-
