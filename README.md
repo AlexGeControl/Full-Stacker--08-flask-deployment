@@ -36,3 +36,71 @@ Completing the project involves several steps:
 6. Create a CodeBuild stage which will build, test, and deploy your code
 
 For more detail about each of these steps, see the project lesson [here](https://classroom.udacity.com/nanodegrees/nd004/parts/1d842ebf-5b10-4749-9e5e-ef28fe98f173/modules/ac13842f-c841-4c1a-b284-b47899f4613d/lessons/becb2dac-c108-4143-8f6c-11b30413e28d/concepts/092cdb35-28f7-4145-b6e6-6278b8dd7527).
+
+## EKS Cluster and IAM Roles
+
+### Create a Kubernetes (EKS) Cluster
+
+First, create an EKS cluster using eksctl:
+```bash
+nohup eksctl create cluster --name uda-full-stack-development --region us-west-2 & > eks-create-cluster.log
+```
+
+### Set Up an IAM Role for the Cluster
+
+The next steps are provided to quickly set up an IAM role for your cluster.
+
+#### Create an IAM role that CodeBuild can use to interact with EKS
+
+* Set an environment variable ACCOUNT_ID to the value of your AWS account id. You can do this with awscli:
+
+    ```bash
+    ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+    ```
+
+* Create a role policy document that allows the actions "eks:Describe*" and "ssm:GetParameters". You can do this by setting an environment variable with the role policy:
+
+    ```bash
+    TRUST="{ \"Version\": \"2012-10-17\", \"Statement\": [ { \"Effect\": \"Allow\", \"Principal\": { \"AWS\": \"arn:aws:iam::${ACCOUNT_ID}:root\" }, \"Action\": \"sts:AssumeRole\" } ] }"
+    ```
+
+* Create a role named 'UdacityFlaskDeployCBKubectlRole' using the role policy document:
+
+    ```bash
+    aws iam create-role --role-name UdacityFlaskDeployCBKubectlRole --assume-role-policy-document "$TRUST" --output text --query 'Role.Arn'
+    ```
+
+* Create a role policy document that also allows the actions "eks:Describe*" and "ssm:GetParameters". You can create the document in your tmp directory:
+
+    ```bash
+    echo '{ "Version": "2012-10-17", "Statement": [ { "Effect": "Allow", "Action": [ "eks:Describe*", "ssm:GetParameters" ], "Resource": "*" } ] }' > /tmp/iam-role-policy 
+    ```
+
+* Attach the policy to the 'UdacityFlaskDeployCBKubectlRole'. You can do this using awscli:
+
+    ```bash
+    aws iam put-role-policy --role-name UdacityFlaskDeployCBKubectlRole --policy-name eks-describe --policy-document file:///tmp/iam-role-policy
+    ```
+
+#### Grant the Role Access to the Cluster.
+
+* Get the current configmap and save it to a file:
+
+    ```bash
+    kubectl get -n kube-system configmap/aws-auth -o yaml > /tmp/aws-auth-patch.yml
+    ```
+
+* In the data/mapRoles section of this document add, replacing <ACCOUNT_ID> with your account id:
+
+    ```yaml
+    - rolearn: arn:aws:iam::<ACCOUNT_ID>:role/UdacityFlaskDeployCBKubectlRole
+        username: build
+        groups:
+        - system:masters
+    ```
+
+* Now update your cluster's configmap:
+
+    ```bash
+    kubectl patch configmap/aws-auth -n kube-system --patch "$(cat /tmp/aws-auth-patch.yml)"
+    ```
