@@ -8,7 +8,7 @@ This is the project for **Containerized Service Deployment on AWS EKS** of Udaci
 
 In this project a Flask API will be containerized and deployed to a Kubernetes cluster using Docker, AWS EKS, CodePipeline, and CodeBuild.
 
-The Flask app that will be used for this project consists of a simple API with three endpoints:
+The Flask app has the following three API endpoints
 
 - `GET '/'`: This is a simple health check, which returns the response 'Healthy'. 
 - `POST '/auth'`: This takes a email and password as json arguments and returns a JWT based on a custom secret.
@@ -105,3 +105,24 @@ The updated config file is available at [aws-auth-patch.yml](scripts/aws-auth-pa
 Generate a GitHub access token. A Github acces token will allow CodePipeline to monitor when a repo is changed. You should generate the token with full control of private repositories, as shown in the image below. Be sure to save the token somewhere that is secure.
 
 <img src="doc/github-personal-access-token.png" alt="GitHub Personal Access Token"/>
+
+#### Put Secret into AWS Parameter Store
+
+Save the JWT secret to be used by buildspec.yml in **AWS Systems Manager's Parameter Store**
+
+The whole operations are packed up inside script [create-jwt-secret.sh](scripts/create-jwt-secret.sh)
+
+```bash
+aws ssm put-parameter --name JWT_SECRET --value "UdacityFullStackDevelopmentJWTSecret" --type SecureString
+```
+
+#### Create CI/CD Pipeline with CloudFormation
+
+After that, create CI/CD pipeline using CloudFormation
+
+* Go the the CloudFormation service in the aws console.
+* Press the 'Create Stack' button.
+* Choose the 'Upload template to S3' option and upload the template file 'ci-cd-codepipeline.cfn.yml'
+* Press 'Next'. Give the stack a name, fill in your GitHub login and the Github access token generated in step 1.
+* Confirm the cluster name matches your cluster, the 'kubectl IAM role' matches the role you created above, and the repository matches the name of your forked repo.
+* Create the stack.

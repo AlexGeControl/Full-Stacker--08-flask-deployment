@@ -20,14 +20,16 @@ phases:
       - echo "[aws-iam-authenticator]\n$(aws-iam-authenticator help)"
       # install awscli:
       - apt-get update && apt-get -y install unzip jq python3-pip python3-dev && pip3 install --upgrade awscli
-      # - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      # - unzip awscliv2.zip
-      # - sudo ./aws/install
-      # - export PATH=$PATH:/usr/local/bin
       - echo "[awscli]\n$(aws --version)"
+      # install app dependencies:
+      - pip3 install -r service/requirements.txt
 
   pre_build:
     commands:
+      # run python tests:
+      - cd service
+      - flask test --coverage=True
+      - cd ..
       # set Docker image name:
       - TAG="$REPOSITORY_NAME.$REPOSITORY_BRANCH.$ENVIRONMENT_NAME.$(date +%Y-%m-%d.%H.%M.%S).$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
       - echo "[image tag]\n${REPOSITORY_URI}:${TAG}"
