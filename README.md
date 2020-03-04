@@ -1,6 +1,6 @@
 # Udacity Full Stack Development Nanodegree
 
-This is 
+This is the project for **Containerized Service Deployment on AWS EKS** of Udacity's  Full Stack Development Nanodegree
 
 -- 
 
